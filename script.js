@@ -481,7 +481,49 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         animateBadgeCanvas();
     }
+// --- NEW: Randomize Badge Content ---
+    const badgeContainer = document.querySelector('.badge-scatter-container');
+    if (badgeContainer) {
+        const badgeElements = badgeContainer.querySelectorAll('.flip-card');
+        
+        // Define your badge data here
+        const badgeData = [
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005458/B1_n84d09.jpg", title: "Event 1", details: "Details for the first event." },
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005461/B2_u9tbiv.jpg", title: "Event 2", details: "Details for the second event." },
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005464/B3_rzbg06.jpg", title: "Event 3", details: "Details for the third event." },
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005467/B4_zwhf2e.jpg", title: "Event 4", details: "Details for the fourth event." },
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005473/B6_rm1xps.jpg", title: "Event 5", details: "Details for the fifth event." },
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005470/B5_mbf2zy.jpg", title: "Event 6", details: "Details for the sixth event." },
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005476/B7_zvazlo.jpg", title: "Event 7", details: "Details for the seventh event." }
+        ];
 
+        // Shuffle function (Fisher-Yates algorithm)
+        function shuffleArray(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]]; // Swap elements
+            }
+        }
+
+        shuffleArray(badgeData); // Shuffle the data
+
+        // Populate the fixed badge elements with shuffled data
+        badgeElements.forEach((badge, index) => {
+            if (index < badgeData.length) { // Ensure we don't go out of bounds
+                const data = badgeData[index];
+                const frontImg = badge.querySelector('.flip-card-front img');
+                const backTitle = badge.querySelector('.flip-card-back h3');
+                const backDetails = badge.querySelector('.flip-card-back p');
+
+                if (frontImg) {
+                    frontImg.src = data.img;
+                    frontImg.alt = data.title + " Badge"; // Set alt text
+                }
+                if (backTitle) backTitle.textContent = data.title;
+                if (backDetails) backDetails.textContent = data.details;
+            }
+        });
+    }
     // --- 10. Logo Glitch Effect Setup ---
     const logoLink = document.querySelector('.logo a');
     if (logoLink) {
