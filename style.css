@@ -1052,7 +1052,7 @@ footer {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 10px;
     /* MODIFIED: Decreased max-height for a smaller thumbnail area */
-    max-height: 30vh; 
+    max-height: 20vh; 
     overflow-y: auto;
     padding-right: 10px; 
 }
