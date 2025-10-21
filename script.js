@@ -122,15 +122,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 lightboxTitle.textContent = title;
                 lightboxDesc.innerHTML = description.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
+                // Logic to determine which lightbox view to show
                 const imagesAttr = item.getAttribute('data-images');
                 const youtubeId = item.getAttribute('data-youtube-id');
 
+                // Default to single image view
                 singleMediaContainer.classList.remove('hidden');
                 galleryContainer.classList.add('hidden');
                 lightboxImg.classList.remove('hidden');
                 lightboxVideoContainer.classList.add('hidden');
 
                 if (category === 'photography' || (imagesAttr && category === '3d')) {
+                    // Show gallery for photography or multi-image 3D
                     singleMediaContainer.classList.add('hidden');
                     galleryContainer.classList.remove('hidden');
                     const imageUrls = imagesAttr.split(',').map(url => url.trim()).filter(url => url);
@@ -151,16 +154,18 @@ document.addEventListener('DOMContentLoaded', () => {
                         });
                     }
                 } else if (youtubeId) {
+                    // Show video
                     lightboxImg.classList.add('hidden');
                     lightboxVideoContainer.classList.remove('hidden');
                     lightboxVideoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
                 } else {
+                    // Show single image (for categories without data-images or youtubeId)
                     const imgSrc = item.querySelector('img').src;
                     lightboxImg.src = imgSrc;
                 }
                 
                 workLightbox.classList.add('show');
-                document.body.classList.add('lightbox-is-open'); // ** Add class to body **
+                document.body.classList.add('lightbox-is-open'); // Add class to body
             });
         });
 
@@ -168,7 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
             workLightbox.classList.remove('show');
             if (lightboxVideoContainer) lightboxVideoContainer.innerHTML = '';
             if (thumbnailGrid) thumbnailGrid.innerHTML = ''; 
-            document.body.classList.remove('lightbox-is-open'); // ** Remove class from body **
+            document.body.classList.remove('lightbox-is-open'); // Remove class from body
         }
         workLightbox.querySelector('.close-btn').addEventListener('click', closeLightbox);
         workLightbox.addEventListener('click', e => {
@@ -194,13 +199,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('lightbox-cert-issuer').textContent = slide.dataset.issuer;
                 document.getElementById('lightbox-cert-date').textContent = slide.dataset.date;
                 certLightbox.classList.add('show');
-                document.body.classList.add('lightbox-is-open'); // ** Add class to body **
+                document.body.classList.add('lightbox-is-open'); // Add class to body
             });
         });
 
         function closeCertLightbox() {
             certLightbox.classList.remove('show');
-            document.body.classList.remove('lightbox-is-open'); // ** Remove class from body **
+            document.body.classList.remove('lightbox-is-open'); // Remove class from body
         }
 
         certLightbox.querySelector('.close-btn').addEventListener('click', closeCertLightbox);
@@ -222,7 +227,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     lightboxRecImg.src = imgSrc;
                     lightboxRecTitle.textContent = titleText;
                     recLightbox.classList.add('show');
-                    document.body.classList.add('lightbox-is-open'); // ** Add class to body **
+                    document.body.classList.add('lightbox-is-open'); // Add class to body
                 }
             });
         });
@@ -230,7 +235,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function closeRecLightbox() { 
             recLightbox.classList.remove('show'); 
             lightboxRecImg.src = ''; 
-            document.body.classList.remove('lightbox-is-open'); // ** Remove class from body **
+            document.body.classList.remove('lightbox-is-open'); // Remove class from body
         }
         closeRecBtn.addEventListener('click', closeRecLightbox);
         recLightbox.addEventListener('click', (e) => { if (e.target === recLightbox) closeRecLightbox(); });
@@ -407,6 +412,66 @@ document.addEventListener('DOMContentLoaded', () => {
             requestAnimationFrame(animateBadgeCanvas);
         }
         animateBadgeCanvas();
+    }
+
+    // --- RESTORED: Random Badge Positioning ---
+    const badgeContainer = document.querySelector('.badge-scatter-container');
+    if (badgeContainer) {
+        const badges = badgeContainer.querySelectorAll('.flip-card');
+        const positions = [];
+        
+        // Use window.onload to wait for images and layout
+        window.onload = () => {
+            const containerWidth = badgeContainer.clientWidth;
+            const containerHeight = badgeContainer.clientHeight;
+
+            function checkOverlap(newPos) {
+                for (const pos of positions) {
+                    const dx = newPos.x - pos.x;
+                    const dy = newPos.y - pos.y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    const avgWidth = (newPos.width + pos.width) / 2;
+                    if (distance < avgWidth * 0.75) { 
+                        return true;
+                    }
+                }
+                return false;
+            }
+
+            badges.forEach(badge => {
+                // Ensure the badge has dimensions before calculating
+                let badgeWidth = badge.offsetWidth; 
+                let badgeHeight = badge.offsetHeight;
+                
+                // If dimensions are 0 initially, set a default and recalculate later maybe
+                if (badgeWidth === 0) badgeWidth = 150; // Set a default width if needed
+                if (badgeHeight === 0) badgeHeight = badgeWidth / (2/3); // Calculate based on aspect ratio
+
+                let newPos;
+                let attempts = 0;
+
+                do {
+                    const maxLeft = containerWidth - badgeWidth - 10; 
+                    const maxTop = containerHeight - badgeHeight - 10; 
+                    
+                    const randomLeft = Math.max(10, Math.random() * Math.max(0, maxLeft)); 
+                    const randomTop = Math.max(10, Math.random() * Math.max(0, maxTop));
+                    
+                    newPos = { x: randomLeft, y: randomTop, width: badgeWidth };
+                    attempts++;
+                } while (checkOverlap(newPos) && attempts < 200);
+
+                positions.push(newPos);
+                
+                const randomRotate = Math.random() * 20 - 10;
+
+                badge.style.position = 'absolute'; 
+                badge.style.width = `${badgeWidth}px`; // Explicitly set width if not set by CSS
+                badge.style.top = `${newPos.y}px`;
+                badge.style.left = `${newPos.x}px`;
+                badge.style.transform = `rotate(${randomRotate}deg)`;
+            });
+        }; // End of window.onload
     }
 
     // --- 10. Logo Glitch Effect Setup ---
