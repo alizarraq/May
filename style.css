@@ -502,14 +502,22 @@ p.lead {
 }
 
 .close-btn {
-    position: absolute;
-    top: 15px;
-    right: 25px;
+    position: sticky; /* Stick within the scrollable lightbox-content */
+    top: 15px;       /* Position 15px from the top */
+    /* Remove 'right: 25px;' for now */
+    float: right;    /* Use float to push it to the right edge *before* sticking */
     font-size: 2.5rem;
     color: var(--text-muted);
     cursor: pointer;
     transition: color 0.3s, transform 0.3s;
-    z-index: 10; 
+    z-index: 1001;   /* Ensure it's above scrolling content */
+    /* Add a background to prevent text scrolling underneath */
+    
+    /* Optional: Add slight padding/margin if needed for spacing */
+    padding: 0 5px 5px 5px; 
+    margin-right: -10px; /* Pull it slightly back if float pushes too far */
+    margin-bottom: -30px; /* Prevent it pushing content down */
+    border-radius: 50%; /* Optional: make background circular */
 }
 
 .close-btn:hover {
@@ -1118,13 +1126,9 @@ footer {
 body.lightbox-is-open .cursor,
 body.lightbox-is-open .cursor-follower {
     display: none !important; /* Use !important to override potential inline styles */
-    cursor: default !important; /* Ensure default cursor is forced */
 }
 
 /* Ensure default cursor shows over lightboxes and their content */
-body.lightbox-is-open, 
-body.lightbox-is-open *,
-.lightbox, 
-.lightbox * {
+.lightbox, .lightbox * {
     cursor: default !important;
 }
