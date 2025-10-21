@@ -120,8 +120,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // ** Determine initial load based on screen width **
         const isMobile = window.innerWidth <= 768; 
-        const INITIAL_THUMBNAILS_TO_LOAD = isMobile ? 7 : 15; 
-        const THUMBNAILS_BATCH_SIZE = isMobile ? 7 : 15; // How many to load on scroll
+        const INITIAL_THUMBNAILS_TO_LOAD = isMobile ? 5 : 15; 
+        const THUMBNAILS_BATCH_SIZE = isMobile ? 5 : 15; // How many to load on scroll
 
         let currentlyDisplayedUrls = []; 
         let lastLoadedIndex = -1; 
