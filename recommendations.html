@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommendations | Maymona Zarraq</title>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
+    <link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="transition-overlay"></div>
+    <div class="cursor"></div>
+    <div class="cursor-follower"></div>
+    <div class="scroll-progress-bar"></div>
+
+    <header>
+        <div class="logo"><a href="index.html">Maymona Zarraq</a></div>
+        <nav class="main-nav">
+            <a href="work.html">Work</a>
+            <a href="about.html">About</a>
+            <a href="certificates.html">Certificates</a>
+            <a href="recommendations.html" class="active">Recommendations</a>
+            <a href="contact.html">Contact</a>
+            <a href="CV-Internship.pdf" target="_blank">Resume</a>
+        </nav>
+        <button class="menu-toggle">
+            <span class="hamburger"></span>
+        </button>
+    </header>
+
+    <main>
+        <section id="recommendations">
+            <h1>Letters of Recommendation</h1>
+            <p class="lead">Testimonials from colleagues and mentors I've had the pleasure of working with. Click on a recommendation to view the letter.</p>
+
+            <div class="accordion-container recommendation-list">
+
+                <div class="accordion-item">
+                    <button class="accordion-header" data-img-src="https://res.cloudinary.com/dw6sm94ix/image/upload/v1761006579/J.U.S.T_Recommendation_lqtkvu.jpg">
+                        <div class="rec-title">
+                            <img src="https://www.just.edu.jo/NewsCenter/PublishingImages/JUST-Logo-01.png" alt="JUST University Logo" class="rec-logo">
+                            <span>Dr. Laila Ibrahim, Professor at J.U.S.T</span>
+                        </div>
+                         <span class="view-icon">View Letter</span>
+                    </button>
+                    <div class="accordion-content" style="max-height: none; padding: 0;">
+                        <p style="padding: 25px;">"I have known Maymoona for a 3 years as a Student... from 2021 until 2025. I taught her Branding and corporate Identity and Typographic... Based on Maymoona's grades, attendance, and class participation, I'd rate Maymoona's academic performance in my class as excellent. Maymoona has shown herself as a promising student, she always works hard... demonstrated tremendous work efficiency, knowledge and competitive skills... I would highly recommend Maymoona Al Zaraq for her performance in my Class, she will be a positive addition to your organization."</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header" data-img-src="https://res.cloudinary.com/dw6sm94ix/image/upload/v1761006427/Ghurfaty_Recommendation_jw8eko.png">
+                        <div class="rec-title">
+                            <img src="https://scontent.famm6-1.fna.fbcdn.net/v/t39.30808-6/347269802_641998494632019_8262670200326766617_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=6ee11a&_nc_ohc=-PYPXxv9UY0Q7kNvwHxXp5w&_nc_oc=AdleWiklWlvMR-1kMxpNMiZG2yC5MIa7Urzleen29qhMGXu2otgiUJloP9zxyp8B4hgsuku_wsTS28s-ik_mc_gX&_nc_zt=23&_nc_ht=scontent.famm6-1.fna&_nc_gid=_UrDI9uzWwPLfMfjWkXyUw&oh=00_AfeZTxu7LneB0vIM3Rr9DbgTbbkJeYMFJ33VXwThdUvmiA&oe=68F98C19" alt="Ghurfaty Showroom Logo" class="rec-logo">
+                            <span>Naiem Alshareef, General Manager at Ghurfaty Showroom</span>
+                        </div>
+                        <span class="view-icon">View Letter</span> </button>
+                    <div class="accordion-content" style="max-height: none; padding: 0;"> 
+                         <p style="padding: 25px;">"It is my pleasure to recommend Maymona Zarraq, who worked with us at Ghurfaty Showroom & Furniture as a Photographer and Videographer for a period of one and a half years... Maymona demonstrated exceptional creativity, professionalism, and dedication... consistently resulted in high-quality visual content... a valued team member who communicated effectively, adapted quickly... We were consistently impressed by her passion for visual storytelling... I am confident that Maymona will bring the same level of talent, commitment, and excellence to any future role she pursues."</p>
+                    </div>
+                </div>
+
+                <div class="accordion-item">
+                    <button class="accordion-header" data-img-src="https://res.cloudinary.com/dw6sm94ix/image/upload/v1761006582/TedX_Recommendation_ldfdxu.png">
+                        <div class="rec-title">
+                            <img src="https://images.seeklogo.com/logo-png/30/1/tedx-logo-png_seeklogo-303746.png" alt="TedX Logo" class="rec-logo">
+                            <span>Hassan Abu Sarris, Licensee at TEDxYarmoukUniversity</span>
+                        </div>
+                         <span class="view-icon">View Letter</span>
+                    </button>
+                     <div class="accordion-content" style="max-height: none; padding: 0;">
+                        <p style="padding: 25px;">"It is my pleasure to recommend Maymona Zarraq, who served as the Leader of the Marketing and Media Team for TEDxYarmouk University 2025... Maymona demonstrated exceptional leadership, creativity, and strategic vision in building and managing a diverse team... played a central role in shaping the visual identity... Her creative decisions ensured that every visual output aligned with the TEDx brand guidelines... Beyond her design skills, Maymona's strength lies in her ability to lead with empathy and clarity... built a communication strategy that helped the event reach a wider audience... I am confident that Maymona's creativity, leadership, and professionalism will continue to make a remarkable impact... She is an exceptional individual who combines artistic vision with strong organizational skills..."</p>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <div id="recommendation-lightbox" class="lightbox">
+        <div class="lightbox-content recommendation-lightbox-content">
+             <span class="close-btn">&times;</span>
+             <h3 id="lightbox-rec-title"></h3>
+             <img id="lightbox-rec-img" src="" alt="Recommendation Letter Image">
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Maymona Zarraq. All rights reserved.
+    </footer>
+    
+    <script src="script.js"></script>
+    </body>
+</html>
