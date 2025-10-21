@@ -165,7 +165,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
                 
                 workLightbox.classList.add('show');
-                document.body.classList.add('lightbox-is-open'); // Add class to body
             });
         });
 
@@ -173,7 +172,6 @@ document.addEventListener('DOMContentLoaded', () => {
             workLightbox.classList.remove('show');
             if (lightboxVideoContainer) lightboxVideoContainer.innerHTML = '';
             if (thumbnailGrid) thumbnailGrid.innerHTML = ''; 
-            document.body.classList.remove('lightbox-is-open'); // Remove class from body
         }
         workLightbox.querySelector('.close-btn').addEventListener('click', closeLightbox);
         workLightbox.addEventListener('click', e => {
@@ -189,7 +187,6 @@ document.addEventListener('DOMContentLoaded', () => {
             coverflowEffect: { rotate: 50, stretch: 0, depth: 100, modifier: 1, slideShadows: true },
             pagination: { el: '.swiper-pagination' }, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
         });
-        
         const certLightbox = document.getElementById('certificate-lightbox');
         const certSlides = document.querySelectorAll('.certificate-slide');
         certSlides.forEach(slide => {
@@ -199,17 +196,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('lightbox-cert-issuer').textContent = slide.dataset.issuer;
                 document.getElementById('lightbox-cert-date').textContent = slide.dataset.date;
                 certLightbox.classList.add('show');
-                document.body.classList.add('lightbox-is-open'); // Add class to body
             });
         });
-
-        function closeCertLightbox() {
-            certLightbox.classList.remove('show');
-            document.body.classList.remove('lightbox-is-open'); // Remove class from body
-        }
-
-        certLightbox.querySelector('.close-btn').addEventListener('click', closeCertLightbox);
-        certLightbox.addEventListener('click', e => { if (e.target === certLightbox) closeCertLightbox(); });
+        certLightbox.querySelector('.close-btn').addEventListener('click', () => certLightbox.classList.remove('show'));
+        certLightbox.addEventListener('click', e => { if (e.target === certLightbox) certLightbox.classList.remove('show'); });
     }
     
     // --- 5. Recommendation Lightbox Logic ---
@@ -227,16 +217,10 @@ document.addEventListener('DOMContentLoaded', () => {
                     lightboxRecImg.src = imgSrc;
                     lightboxRecTitle.textContent = titleText;
                     recLightbox.classList.add('show');
-                    document.body.classList.add('lightbox-is-open'); // Add class to body
                 }
             });
         });
-
-        function closeRecLightbox() { 
-            recLightbox.classList.remove('show'); 
-            lightboxRecImg.src = ''; 
-            document.body.classList.remove('lightbox-is-open'); // Remove class from body
-        }
+        function closeRecLightbox() { recLightbox.classList.remove('show'); lightboxRecImg.src = ''; }
         closeRecBtn.addEventListener('click', closeRecLightbox);
         recLightbox.addEventListener('click', (e) => { if (e.target === recLightbox) closeRecLightbox(); });
     }
@@ -281,7 +265,7 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(section);
     });
     
-    // --- 9. Interactive Particle Background (Homepage) ---
+     // --- 9. Interactive Particle Background ---
     const canvas = document.getElementById('particle-canvas');
     if (canvas) {
         const ctx = canvas.getContext('2d');
@@ -291,9 +275,8 @@ document.addEventListener('DOMContentLoaded', () => {
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            initHomeParticles(); 
         }
-        
+        resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
 
         window.addEventListener('mousemove', (event) => {
@@ -306,58 +289,97 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         class Particle {
-            constructor(x, y, directionX, directionY, size, color) { this.x = x; this.y = y; this.directionX = directionX; this.directionY = directionY; this.size = size; this.color = color; }
-            draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false); ctx.fillStyle = this.color; ctx.fill(); }
+            constructor(x, y, directionX, directionY, size, color) {
+                this.x = x;
+                this.y = y;
+                this.directionX = directionX;
+                this.directionY = directionY;
+                this.size = size;
+                this.color = color;
+            }
+            draw() {
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
+                ctx.fillStyle = this.color;
+                ctx.fill();
+            }
             update() {
-                if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
-                if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
-                let dx = mouse.x - this.x; let dy = mouse.y - this.y; let distance = Math.sqrt(dx * dx + dy * dy);
-                if (distance < mouse.radius + this.size) {
-                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) this.x += 5;
-                    if (mouse.x > this.x && this.x > this.size * 10) this.x -= 5;
-                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) this.y += 5;
-                    if (mouse.y > this.y && this.y > this.size * 10) this.y -= 5;
+                if (this.x > canvas.width || this.x < 0) {
+                    this.directionX = -this.directionX;
                 }
-                this.x += this.directionX; this.y += this.directionY; this.draw();
+                if (this.y > canvas.height || this.y < 0) {
+                    this.directionY = -this.directionY;
+                }
+                let dx = mouse.x - this.x;
+                let dy = mouse.y - this.y;
+                let distance = Math.sqrt(dx * dx + dy * dy);
+                if (distance < mouse.radius + this.size) {
+                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) {
+                        this.x += 5;
+                    }
+                    if (mouse.x > this.x && this.x > this.size * 10) {
+                        this.x -= 5;
+                    }
+                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) {
+                        this.y += 5;
+                    }
+                    if (mouse.y > this.y && this.y > this.size * 10) {
+                        this.y -= 5;
+                    }
+                }
+                this.x += this.directionX;
+                this.y += this.directionY;
+                this.draw();
             }
         }
 
-        function initHomeParticles() { 
-            particles = []; if (canvas.width === 0 || canvas.height === 0) return; 
+        function init() {
+            particles = [];
             let numberOfParticles = (canvas.height * canvas.width) / 9000;
             for (let i = 0; i < numberOfParticles; i++) {
                 let size = (Math.random() * 2) + 1;
-                let x = (Math.random() * ((canvas.width - size * 2) - (size * 2)) + size * 2);
-                let y = (Math.random() * ((canvas.height - size * 2) - (size * 2)) + size * 2);
-                let directionX = (Math.random() * 0.4) - 0.2; let directionY = (Math.random() * 0.4) - 0.2;
+                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
+                let directionX = (Math.random() * 0.4) - 0.2;
+                let directionY = (Math.random() * 0.4) - 0.2;
                 let color = '#333';
                 particles.push(new Particle(x, y, directionX, directionY, size, color));
             }
         }
 
-        function animateHomeCanvas() { 
-            requestAnimationFrame(animateHomeCanvas); ctx.clearRect(0, 0, canvas.width, canvas.height); 
-            for (let i = 0; i < particles.length; i++) { particles[i].update(); }
-            connectHomeParticles();
+        function animate() {
+            requestAnimationFrame(animate);
+            ctx.clearRect(0, 0, innerWidth, innerHeight);
+
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+            }
+            connect();
         }
 
-        function connectHomeParticles() {
-            let opacityValue = 1; if (canvas.width === 0 || canvas.height === 0) return;
+        function connect() {
+            let opacityValue = 1;
             for (let a = 0; a < particles.length; a++) {
                 for (let b = a; b < particles.length; b++) {
-                    let distance = ((particles[a].x - particles[b].x) * (particles[a].x - particles[b].x)) + ((particles[a].y - particles[b].y) * (particles[a].y - particles[b].y));
+                    let distance = ((particles[a].x - particles[b].x) * (particles[a].x - particles[b].x))
+                        + ((particles[a].y - particles[b].y) * (particles[a].y - particles[b].y));
                     if (distance < (canvas.width / 7) * (canvas.height / 7)) {
-                        opacityValue = 1 - (distance / 20000); ctx.strokeStyle = `rgba(100, 100, 100, ${opacityValue})`; ctx.lineWidth = 1;
-                        ctx.beginPath(); ctx.moveTo(particles[a].x, particles[a].y); ctx.lineTo(particles[b].x, particles[b].y); ctx.stroke();
+                        opacityValue = 1 - (distance / 20000);
+                        ctx.strokeStyle = `rgba(100, 100, 100, ${opacityValue})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(particles[a].x, particles[a].y);
+                        ctx.lineTo(particles[b].x, particles[b].y);
+                        ctx.stroke();
                     }
                 }
             }
         }
-        resizeCanvas(); 
-        animateHomeCanvas();
+        init();
+        animate();
     }
     
-    // --- Stardust Background (Badges Section) ---
+    /// --- Stardust Background (Badges Section) ---
     const badgeCanvas = document.getElementById('badge-canvas-background');
     if (badgeCanvas) {
         const ctx = badgeCanvas.getContext('2d');
@@ -388,12 +410,33 @@ document.addEventListener('DOMContentLoaded', () => {
             badgeMouse.y = undefined;
         });
 
+        // **** RESTORED BadgeParticle class definition ****
         class BadgeParticle {
-            constructor(x, y) { this.x = x; this.y = y; this.size = Math.random() * 4 + 1; this.speedX = Math.random() * 3 - 1.5; this.speedY = Math.random() * 3 - 1.5; this.color = badgeColors[Math.floor(Math.random() * badgeColors.length)]; this.life = 1; }
-            update() { this.x += this.speedX; this.y += this.speedY; if (this.size > 0.2) this.size -= 0.1; this.life -= 0.02; }
-            draw() { ctx.fillStyle = this.color; ctx.globalAlpha = this.life; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
+            constructor(x, y) {
+                this.x = x;
+                this.y = y;
+                this.size = Math.random() * 4 + 1;
+                this.speedX = Math.random() * 3 - 1.5;
+                this.speedY = Math.random() * 3 - 1.5;
+                this.color = badgeColors[Math.floor(Math.random() * badgeColors.length)];
+                this.life = 1;
+            }
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                if (this.size > 0.2) this.size -= 0.1;
+                this.life -= 0.02;
+            }
+            draw() {
+                ctx.fillStyle = this.color;
+                ctx.globalAlpha = this.life;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
         }
 
+        // **** RESTORED handleBadgeParticles function definition ****
         function handleBadgeParticles() {
             for (let i = 0; i < badgeParticles.length; i++) {
                 badgeParticles[i].update();
@@ -405,75 +448,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
+        // **** RESTORED animateBadgeCanvas function definition ****
         function animateBadgeCanvas() {
             ctx.clearRect(0, 0, badgeCanvas.width, badgeCanvas.height);
             ctx.globalAlpha = 1;
             handleBadgeParticles();
             requestAnimationFrame(animateBadgeCanvas);
         }
-        animateBadgeCanvas();
-    }
-
-    // --- RESTORED: Random Badge Positioning ---
-    const badgeContainer = document.querySelector('.badge-scatter-container');
-    if (badgeContainer) {
-        const badges = badgeContainer.querySelectorAll('.flip-card');
-        const positions = [];
         
-        // Use window.onload to wait for images and layout
-        window.onload = () => {
-            const containerWidth = badgeContainer.clientWidth;
-            const containerHeight = badgeContainer.clientHeight;
-
-            function checkOverlap(newPos) {
-                for (const pos of positions) {
-                    const dx = newPos.x - pos.x;
-                    const dy = newPos.y - pos.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    const avgWidth = (newPos.width + pos.width) / 2;
-                    if (distance < avgWidth * 0.75) { 
-                        return true;
-                    }
-                }
-                return false;
-            }
-
-            badges.forEach(badge => {
-                // Ensure the badge has dimensions before calculating
-                let badgeWidth = badge.offsetWidth; 
-                let badgeHeight = badge.offsetHeight;
-                
-                // If dimensions are 0 initially, set a default and recalculate later maybe
-                if (badgeWidth === 0) badgeWidth = 150; // Set a default width if needed
-                if (badgeHeight === 0) badgeHeight = badgeWidth / (2/3); // Calculate based on aspect ratio
-
-                let newPos;
-                let attempts = 0;
-
-                do {
-                    const maxLeft = containerWidth - badgeWidth - 10; 
-                    const maxTop = containerHeight - badgeHeight - 10; 
-                    
-                    const randomLeft = Math.max(10, Math.random() * Math.max(0, maxLeft)); 
-                    const randomTop = Math.max(10, Math.random() * Math.max(0, maxTop));
-                    
-                    newPos = { x: randomLeft, y: randomTop, width: badgeWidth };
-                    attempts++;
-                } while (checkOverlap(newPos) && attempts < 200);
-
-                positions.push(newPos);
-                
-                const randomRotate = Math.random() * 20 - 10;
-
-                badge.style.position = 'absolute'; 
-                badge.style.width = `${badgeWidth}px`; // Explicitly set width if not set by CSS
-                badge.style.top = `${newPos.y}px`;
-                badge.style.left = `${newPos.x}px`;
-                badge.style.transform = `rotate(${randomRotate}deg)`;
-            });
-        }; // End of window.onload
+        animateBadgeCanvas(); // Start the animation
     }
-
     // --- 10. Logo Glitch Effect Setup ---
     const logoLink = document.querySelector('.logo a');
     if (logoLink) {
