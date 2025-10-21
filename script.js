@@ -144,6 +144,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             const thumb = document.createElement('img');
                             thumb.src = url;
                             thumb.classList.add('thumbnail-item');
+                            thumb.loading = 'lazy';
                             if (index === 0) thumb.classList.add('active');
                             thumb.addEventListener('click', () => {
                                 mainGalleryImage.src = url;
