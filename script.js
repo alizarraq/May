@@ -58,11 +58,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         function animateCursor() {
-            posX += (mouseX - posX) * 0.1;
-            posY += (mouseY - posY) * 0.1;
+            // Check if lightbox is open before moving cursor
+            if (!document.body.classList.contains('lightbox-is-open')) {
+                 posX += (mouseX - posX) * 0.1;
+                 posY += (mouseY - posY) * 0.1;
             
-            cursor.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
-            follower.style.transform = `translate(${posX}px, ${posY}px) translate(-50%, -50%)`;
+                cursor.style.transform = `translate(${mouseX}px, ${mouseY}px) translate(-50%, -50%)`;
+                follower.style.transform = `translate(${posX}px, ${posY}px) translate(-50%, -50%)`;
+             } // Only animate if lightbox is NOT open
             
             requestAnimationFrame(animateCursor);
         }
@@ -71,7 +74,10 @@ document.addEventListener('DOMContentLoaded', () => {
         const interactiveElements = document.querySelectorAll('a, button, .project-item, .swiper-slide, .filter-btn');
         interactiveElements.forEach(el => {
             el.addEventListener('mouseover', () => {
-                follower.classList.add('active');
+                // Only add active class if lightbox is NOT open
+                if (!document.body.classList.contains('lightbox-is-open')) {
+                    follower.classList.add('active');
+                 }
             });
             el.addEventListener('mouseout', () => {
                 follower.classList.remove('active');
@@ -100,8 +106,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
-
-    // --- 3. Work Page: Lightbox Modal Logic ---
+// --- 3. Work Page: Lightbox Modal Logic ---
     const workLightbox = document.getElementById('lightbox');
     if (workLightbox) {
         const singleMediaContainer = document.getElementById('lightbox-single-media');
@@ -112,74 +117,135 @@ document.addEventListener('DOMContentLoaded', () => {
         const lightboxVideoContainer = document.getElementById('lightbox-video-container');
         const lightboxTitle = document.getElementById('lightbox-title');
         const lightboxDesc = document.getElementById('lightbox-desc');
-        
+
+        // ** Determine initial load based on screen width **
+        const isMobile = window.innerWidth <= 768; 
+        const INITIAL_THUMBNAILS_TO_LOAD = isMobile ? 7 : 15; 
+        const THUMBNAILS_BATCH_SIZE = isMobile ? 7 : 15; // How many to load on scroll
+
+        let currentlyDisplayedUrls = []; 
+        let lastLoadedIndex = -1; 
+
+        function createAndAppendThumbnail(url, index, title) {
+            const thumb = document.createElement('img');
+            thumb.src = url;
+            thumb.alt = title + " thumbnail " + (index + 1);
+            thumb.classList.add('thumbnail-item');
+            thumb.loading = 'lazy'; 
+
+            if (index === 0) thumb.classList.add('active');
+
+            thumb.addEventListener('click', () => {
+                mainGalleryImage.src = url;
+                thumbnailGrid.querySelectorAll('.thumbnail-item').forEach(t => t.classList.remove('active'));
+                thumb.classList.add('active');
+            });
+
+            thumbnailGrid.appendChild(thumb);
+        }
+
+        function loadMoreThumbnails(title) {
+            const nextIndexToLoad = lastLoadedIndex + 1;
+             // Check if all images are already loaded
+             if (nextIndexToLoad >= currentlyDisplayedUrls.length) {
+                 return; 
+             }
+             
+            const remainingImages = currentlyDisplayedUrls.length - nextIndexToLoad;
+            // ** Use dynamic batch size **
+            const numToLoad = Math.min(remainingImages, THUMBNAILS_BATCH_SIZE); 
+
+            if (numToLoad > 0) {
+                for (let i = 0; i < numToLoad; i++) {
+                    const index = nextIndexToLoad + i;
+                    // Ensure index is within bounds (safety check)
+                    if (index < currentlyDisplayedUrls.length) { 
+                        createAndAppendThumbnail(currentlyDisplayedUrls[index], index, title);
+                    }
+                }
+                lastLoadedIndex += numToLoad;
+            }
+        }
+
+        if (thumbnailGrid) {
+            let isLoadingMore = false; // Add a flag to prevent multiple rapid loads
+            thumbnailGrid.addEventListener('scroll', () => {
+                // Check if scrolled near the bottom and not already loading
+                if (!isLoadingMore && (thumbnailGrid.scrollHeight - thumbnailGrid.scrollTop <= thumbnailGrid.clientHeight + 100)) { // Increased threshold slightly
+                    isLoadingMore = true; // Set flag
+                    const title = lightboxTitle.textContent; 
+                    loadMoreThumbnails(title);
+                    // Reset flag after a short delay to allow rendering
+                    setTimeout(() => { isLoadingMore = false; }, 200); 
+                }
+            });
+        }
+
+
         document.querySelectorAll('.project-item').forEach(item => {
             item.addEventListener('click', () => {
                 const category = item.getAttribute('data-category');
                 const title = item.getAttribute('data-title');
                 const description = item.getAttribute('data-description');
-                
+
                 lightboxTitle.textContent = title;
                 lightboxDesc.innerHTML = description.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
-                // Logic to determine which lightbox view to show
                 const imagesAttr = item.getAttribute('data-images');
                 const youtubeId = item.getAttribute('data-youtube-id');
 
-                // Default to single image view
                 singleMediaContainer.classList.remove('hidden');
                 galleryContainer.classList.add('hidden');
                 lightboxImg.classList.remove('hidden');
                 lightboxVideoContainer.classList.add('hidden');
 
+                currentlyDisplayedUrls = [];
+                lastLoadedIndex = -1; // Reset index
+
                 if (category === 'photography' || (imagesAttr && category === '3d')) {
-                    // Show gallery for photography or multi-image 3D
                     singleMediaContainer.classList.add('hidden');
                     galleryContainer.classList.remove('hidden');
-                    const imageUrls = imagesAttr.split(',').map(url => url.trim()).filter(url => url);
+                    currentlyDisplayedUrls = imagesAttr.split(',').map(url => url.trim()).filter(url => url); 
                     thumbnailGrid.innerHTML = ''; 
-                    if (imageUrls.length > 0) {
-                        mainGalleryImage.src = imageUrls[0];
-                        imageUrls.forEach((url, index) => {
-                            const thumb = document.createElement('img');
-                            thumb.src = url;
-                            thumb.classList.add('thumbnail-item');
-                            thumb.loading = 'lazy';
-                            if (index === 0) thumb.classList.add('active');
-                            thumb.addEventListener('click', () => {
-                                mainGalleryImage.src = url;
-                                thumbnailGrid.querySelectorAll('.thumbnail-item').forEach(t => t.classList.remove('active'));
-                                thumb.classList.add('active');
-                            });
-                            thumbnailGrid.appendChild(thumb);
-                        });
+
+                    if (currentlyDisplayedUrls.length > 0) {
+                        mainGalleryImage.src = currentlyDisplayedUrls[0];
+                        // ** Use dynamic initial load **
+                        const numThumbsToCreate = Math.min(currentlyDisplayedUrls.length, INITIAL_THUMBNAILS_TO_LOAD);
+                        for (let index = 0; index < numThumbsToCreate; index++) {
+                             createAndAppendThumbnail(currentlyDisplayedUrls[index], index, title);
+                        }
+                        lastLoadedIndex = numThumbsToCreate - 1; // Update last loaded index
                     }
+
                 } else if (youtubeId) {
-                    // Show video
                     lightboxImg.classList.add('hidden');
                     lightboxVideoContainer.classList.remove('hidden');
                     lightboxVideoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
                 } else {
-                    // Show single image (for categories without data-images or youtubeId)
                     const imgSrc = item.querySelector('img').src;
                     lightboxImg.src = imgSrc;
                 }
                 
                 workLightbox.classList.add('show');
+                document.body.classList.add('lightbox-is-open'); 
             });
         });
 
         function closeLightbox() {
             workLightbox.classList.remove('show');
             if (lightboxVideoContainer) lightboxVideoContainer.innerHTML = '';
-            if (thumbnailGrid) thumbnailGrid.innerHTML = ''; 
+            if (thumbnailGrid) thumbnailGrid.innerHTML = '';
+            document.body.classList.remove('lightbox-is-open');
+            currentlyDisplayedUrls = [];
+            lastLoadedIndex = -1;
         }
         workLightbox.querySelector('.close-btn').addEventListener('click', closeLightbox);
         workLightbox.addEventListener('click', e => {
             if (e.target === workLightbox) closeLightbox();
         });
     }
-    
+
     // --- 4. Certificate Slider & Lightbox ---
     const certSlider = document.querySelector('.certificate-slider');
     if (certSlider) {
@@ -188,6 +254,7 @@ document.addEventListener('DOMContentLoaded', () => {
             coverflowEffect: { rotate: 50, stretch: 0, depth: 100, modifier: 1, slideShadows: true },
             pagination: { el: '.swiper-pagination' }, navigation: { nextEl: '.swiper-button-next', prevEl: '.swiper-button-prev' },
         });
+        
         const certLightbox = document.getElementById('certificate-lightbox');
         const certSlides = document.querySelectorAll('.certificate-slide');
         certSlides.forEach(slide => {
@@ -197,10 +264,17 @@ document.addEventListener('DOMContentLoaded', () => {
                 document.getElementById('lightbox-cert-issuer').textContent = slide.dataset.issuer;
                 document.getElementById('lightbox-cert-date').textContent = slide.dataset.date;
                 certLightbox.classList.add('show');
+                document.body.classList.add('lightbox-is-open'); // ** Add class to body **
             });
         });
-        certLightbox.querySelector('.close-btn').addEventListener('click', () => certLightbox.classList.remove('show'));
-        certLightbox.addEventListener('click', e => { if (e.target === certLightbox) certLightbox.classList.remove('show'); });
+
+        function closeCertLightbox() {
+            certLightbox.classList.remove('show');
+            document.body.classList.remove('lightbox-is-open'); // ** Remove class from body **
+        }
+
+        certLightbox.querySelector('.close-btn').addEventListener('click', closeCertLightbox);
+        certLightbox.addEventListener('click', e => { if (e.target === certLightbox) closeCertLightbox(); });
     }
     
     // --- 5. Recommendation Lightbox Logic ---
@@ -218,10 +292,16 @@ document.addEventListener('DOMContentLoaded', () => {
                     lightboxRecImg.src = imgSrc;
                     lightboxRecTitle.textContent = titleText;
                     recLightbox.classList.add('show');
+                    document.body.classList.add('lightbox-is-open'); // ** Add class to body **
                 }
             });
         });
-        function closeRecLightbox() { recLightbox.classList.remove('show'); lightboxRecImg.src = ''; }
+
+        function closeRecLightbox() { 
+            recLightbox.classList.remove('show'); 
+            lightboxRecImg.src = ''; 
+            document.body.classList.remove('lightbox-is-open'); // ** Remove class from body **
+        }
         closeRecBtn.addEventListener('click', closeRecLightbox);
         recLightbox.addEventListener('click', (e) => { if (e.target === recLightbox) closeRecLightbox(); });
     }
@@ -245,8 +325,11 @@ document.addEventListener('DOMContentLoaded', () => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const targetUrl = link.href;
-                if (transitionOverlay) { transitionOverlay.style.opacity = '1'; }
-                setTimeout(() => { window.location.href = targetUrl; }, 500);
+                // Don't trigger transition if opening a lightbox
+                if (!e.target.closest('.project-item, .certificate-slide, .accordion-header')) {
+                    if (transitionOverlay) { transitionOverlay.style.opacity = '1'; }
+                    setTimeout(() => { window.location.href = targetUrl; }, 500);
+                }
             });
         }
     });
@@ -266,7 +349,7 @@ document.addEventListener('DOMContentLoaded', () => {
         observer.observe(section);
     });
     
-     // --- 9. Interactive Particle Background ---
+    // --- 9. Interactive Particle Background (Homepage) ---
     const canvas = document.getElementById('particle-canvas');
     if (canvas) {
         const ctx = canvas.getContext('2d');
@@ -276,8 +359,9 @@ document.addEventListener('DOMContentLoaded', () => {
         function resizeCanvas() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
+            initHomeParticles(); 
         }
-        resizeCanvas();
+        
         window.addEventListener('resize', resizeCanvas);
 
         window.addEventListener('mousemove', (event) => {
@@ -290,97 +374,58 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         class Particle {
-            constructor(x, y, directionX, directionY, size, color) {
-                this.x = x;
-                this.y = y;
-                this.directionX = directionX;
-                this.directionY = directionY;
-                this.size = size;
-                this.color = color;
-            }
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            }
+            constructor(x, y, directionX, directionY, size, color) { this.x = x; this.y = y; this.directionX = directionX; this.directionY = directionY; this.size = size; this.color = color; }
+            draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2, false); ctx.fillStyle = this.color; ctx.fill(); }
             update() {
-                if (this.x > canvas.width || this.x < 0) {
-                    this.directionX = -this.directionX;
-                }
-                if (this.y > canvas.height || this.y < 0) {
-                    this.directionY = -this.directionY;
-                }
-                let dx = mouse.x - this.x;
-                let dy = mouse.y - this.y;
-                let distance = Math.sqrt(dx * dx + dy * dy);
+                if (this.x > canvas.width || this.x < 0) this.directionX = -this.directionX;
+                if (this.y > canvas.height || this.y < 0) this.directionY = -this.directionY;
+                let dx = mouse.x - this.x; let dy = mouse.y - this.y; let distance = Math.sqrt(dx * dx + dy * dy);
                 if (distance < mouse.radius + this.size) {
-                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) {
-                        this.x += 5;
-                    }
-                    if (mouse.x > this.x && this.x > this.size * 10) {
-                        this.x -= 5;
-                    }
-                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) {
-                        this.y += 5;
-                    }
-                    if (mouse.y > this.y && this.y > this.size * 10) {
-                        this.y -= 5;
-                    }
+                    if (mouse.x < this.x && this.x < canvas.width - this.size * 10) this.x += 5;
+                    if (mouse.x > this.x && this.x > this.size * 10) this.x -= 5;
+                    if (mouse.y < this.y && this.y < canvas.height - this.size * 10) this.y += 5;
+                    if (mouse.y > this.y && this.y > this.size * 10) this.y -= 5;
                 }
-                this.x += this.directionX;
-                this.y += this.directionY;
-                this.draw();
+                this.x += this.directionX; this.y += this.directionY; this.draw();
             }
         }
 
-        function init() {
-            particles = [];
+        function initHomeParticles() { 
+            particles = []; if (canvas.width === 0 || canvas.height === 0) return; 
             let numberOfParticles = (canvas.height * canvas.width) / 9000;
             for (let i = 0; i < numberOfParticles; i++) {
                 let size = (Math.random() * 2) + 1;
-                let x = (Math.random() * ((innerWidth - size * 2) - (size * 2)) + size * 2);
-                let y = (Math.random() * ((innerHeight - size * 2) - (size * 2)) + size * 2);
-                let directionX = (Math.random() * 0.4) - 0.2;
-                let directionY = (Math.random() * 0.4) - 0.2;
+                let x = (Math.random() * ((canvas.width - size * 2) - (size * 2)) + size * 2);
+                let y = (Math.random() * ((canvas.height - size * 2) - (size * 2)) + size * 2);
+                let directionX = (Math.random() * 0.4) - 0.2; let directionY = (Math.random() * 0.4) - 0.2;
                 let color = '#333';
                 particles.push(new Particle(x, y, directionX, directionY, size, color));
             }
         }
 
-        function animate() {
-            requestAnimationFrame(animate);
-            ctx.clearRect(0, 0, innerWidth, innerHeight);
-
-            for (let i = 0; i < particles.length; i++) {
-                particles[i].update();
-            }
-            connect();
+        function animateHomeCanvas() { 
+            requestAnimationFrame(animateHomeCanvas); ctx.clearRect(0, 0, canvas.width, canvas.height); 
+            for (let i = 0; i < particles.length; i++) { particles[i].update(); }
+            connectHomeParticles();
         }
 
-        function connect() {
-            let opacityValue = 1;
+        function connectHomeParticles() {
+            let opacityValue = 1; if (canvas.width === 0 || canvas.height === 0) return;
             for (let a = 0; a < particles.length; a++) {
                 for (let b = a; b < particles.length; b++) {
-                    let distance = ((particles[a].x - particles[b].x) * (particles[a].x - particles[b].x))
-                        + ((particles[a].y - particles[b].y) * (particles[a].y - particles[b].y));
+                    let distance = ((particles[a].x - particles[b].x) * (particles[a].x - particles[b].x)) + ((particles[a].y - particles[b].y) * (particles[a].y - particles[b].y));
                     if (distance < (canvas.width / 7) * (canvas.height / 7)) {
-                        opacityValue = 1 - (distance / 20000);
-                        ctx.strokeStyle = `rgba(100, 100, 100, ${opacityValue})`;
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(particles[a].x, particles[a].y);
-                        ctx.lineTo(particles[b].x, particles[b].y);
-                        ctx.stroke();
+                        opacityValue = 1 - (distance / 20000); ctx.strokeStyle = `rgba(100, 100, 100, ${opacityValue})`; ctx.lineWidth = 1;
+                        ctx.beginPath(); ctx.moveTo(particles[a].x, particles[a].y); ctx.lineTo(particles[b].x, particles[b].y); ctx.stroke();
                     }
                 }
             }
         }
-        init();
-        animate();
+        resizeCanvas(); 
+        animateHomeCanvas();
     }
     
-    /// --- Stardust Background (Badges Section) ---
+    // --- Stardust Background (Badges Section) ---
     const badgeCanvas = document.getElementById('badge-canvas-background');
     if (badgeCanvas) {
         const ctx = badgeCanvas.getContext('2d');
@@ -411,33 +456,12 @@ document.addEventListener('DOMContentLoaded', () => {
             badgeMouse.y = undefined;
         });
 
-        // **** RESTORED BadgeParticle class definition ****
         class BadgeParticle {
-            constructor(x, y) {
-                this.x = x;
-                this.y = y;
-                this.size = Math.random() * 4 + 1;
-                this.speedX = Math.random() * 3 - 1.5;
-                this.speedY = Math.random() * 3 - 1.5;
-                this.color = badgeColors[Math.floor(Math.random() * badgeColors.length)];
-                this.life = 1;
-            }
-            update() {
-                this.x += this.speedX;
-                this.y += this.speedY;
-                if (this.size > 0.2) this.size -= 0.1;
-                this.life -= 0.02;
-            }
-            draw() {
-                ctx.fillStyle = this.color;
-                ctx.globalAlpha = this.life;
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
+            constructor(x, y) { this.x = x; this.y = y; this.size = Math.random() * 4 + 1; this.speedX = Math.random() * 3 - 1.5; this.speedY = Math.random() * 3 - 1.5; this.color = badgeColors[Math.floor(Math.random() * badgeColors.length)]; this.life = 1; }
+            update() { this.x += this.speedX; this.y += this.speedY; if (this.size > 0.2) this.size -= 0.1; this.life -= 0.02; }
+            draw() { ctx.fillStyle = this.color; ctx.globalAlpha = this.life; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2); ctx.fill(); }
         }
 
-        // **** RESTORED handleBadgeParticles function definition ****
         function handleBadgeParticles() {
             for (let i = 0; i < badgeParticles.length; i++) {
                 badgeParticles[i].update();
@@ -449,16 +473,15 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // **** RESTORED animateBadgeCanvas function definition ****
         function animateBadgeCanvas() {
             ctx.clearRect(0, 0, badgeCanvas.width, badgeCanvas.height);
             ctx.globalAlpha = 1;
             handleBadgeParticles();
             requestAnimationFrame(animateBadgeCanvas);
         }
-        
-        animateBadgeCanvas(); // Start the animation
+        animateBadgeCanvas();
     }
+
     // --- 10. Logo Glitch Effect Setup ---
     const logoLink = document.querySelector('.logo a');
     if (logoLink) {

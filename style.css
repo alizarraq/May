@@ -1044,7 +1044,7 @@ footer {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 10px;
     /* MODIFIED: Decreased max-height for a smaller thumbnail area */
-    max-height: 30vh; 
+    max-height: 20vh; 
     overflow-y: auto;
     padding-right: 10px; 
 }
@@ -1111,4 +1111,20 @@ footer {
     height: auto;
     display: block;
     margin-top: 10px; /* Space below title */
+}
+/* --- 18. Cursor Hiding for Lightboxes --- */
+
+/* Hide custom cursor when a lightbox is open */
+body.lightbox-is-open .cursor,
+body.lightbox-is-open .cursor-follower {
+    display: none !important; /* Use !important to override potential inline styles */
+    cursor: default !important; /* Ensure default cursor is forced */
+}
+
+/* Ensure default cursor shows over lightboxes and their content */
+body.lightbox-is-open, 
+body.lightbox-is-open *,
+.lightbox, 
+.lightbox * {
+    cursor: default !important;
 }
