@@ -95,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 filterButtons.forEach(btn => btn.classList.remove('active'));
                 button.classList.add('active');
                 const filterValue = button.getAttribute('data-filter');
+                
                 projectItems.forEach(item => {
                     const itemCategory = item.getAttribute('data-category');
                     if (filterValue === 'all' || filterValue === itemCategory) {
@@ -106,6 +107,7 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         });
     }
+
 // --- 3. Work Page: Lightbox Modal Logic ---
     const workLightbox = document.getElementById('lightbox');
     if (workLightbox) {
@@ -187,12 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const category = item.getAttribute('data-category');
                 const title = item.getAttribute('data-title');
                 const description = item.getAttribute('data-description');
+                const imagesAttr = item.getAttribute('data-images');
+                const youtubeId = item.getAttribute('data-youtube-id');
+                const videoSrc = item.getAttribute('data-video-src'); // *** NEW ***
 
                 lightboxTitle.textContent = title;
                 lightboxDesc.innerHTML = description.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-                const imagesAttr = item.getAttribute('data-images');
-                const youtubeId = item.getAttribute('data-youtube-id');
 
                 singleMediaContainer.classList.remove('hidden');
                 galleryContainer.classList.add('hidden');
@@ -218,10 +220,24 @@ document.addEventListener('DOMContentLoaded', () => {
                         lastLoadedIndex = numThumbsToCreate - 1; // Update last loaded index
                     }
 
-                } else if (youtubeId) {
+                // *** MODIFIED LOGIC ***
+                } else if (youtubeId || videoSrc) {
                     lightboxImg.classList.add('hidden');
                     lightboxVideoContainer.classList.remove('hidden');
-                    lightboxVideoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+
+                    if (youtubeId) {
+                        // It's a YouTube video
+                        lightboxVideoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+                    } else if (videoSrc) {
+                        // It's a Cloudinary/Self-hosted video
+                        lightboxVideoContainer.innerHTML = `
+                            <video controls autoplay muted playsinline style="width: 100%; max-height: 70vh;">
+                                <source src="${videoSrc}" type="video/mp4">
+                                Your browser does not support the video tag.
+                            </video>`;
+                    }
+                // *** END MODIFIED LOGIC ***
+
                 } else {
                     const imgSrc = item.querySelector('img').src;
                     lightboxImg.src = imgSrc;
@@ -259,10 +275,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const certSlides = document.querySelectorAll('.certificate-slide');
         certSlides.forEach(slide => {
             slide.addEventListener('click', () => {
+                // MODIFICATION START
+                const description = slide.dataset.description || ''; // Get description or empty string
+                // MODIFICATION END
+
                 document.getElementById('lightbox-cert-img').src = slide.dataset.imgSrc;
                 document.getElementById('lightbox-cert-title').textContent = slide.dataset.title;
                 document.getElementById('lightbox-cert-issuer').textContent = slide.dataset.issuer;
                 document.getElementById('lightbox-cert-date').textContent = slide.dataset.date;
+                
+                // MODIFICATION START
+                document.getElementById('lightbox-cert-desc').textContent = description; // Set the description text
+                // MODIFICATION END
+                
                 certLightbox.classList.add('show');
                 document.body.classList.add('lightbox-is-open'); // ** Add class to body **
             });
@@ -494,7 +519,7 @@ document.addEventListener('DOMContentLoaded', () => {
             { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005467/B4_zwhf2e.jpg", title: "Event 4", details: "Details for the fourth event." },
             { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005473/B6_rm1xps.jpg", title: "Event 5", details: "Details for the fifth event." },
             { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005470/B5_mbf2zy.jpg", title: "Event 6", details: "Details for the sixth event." },
-            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005476/B7_zvazlo.jpg", title: "Event 7", details: "Details for the seventh event." }
+            { img: "httpstrans://res.cloudinary.com/dw6sm94ix/image/upload/v1761005476/B7_zvazlo.jpg", title: "Event 7", details: "Details for the seventh event." }
         ];
 
         // Shuffle function (Fisher-Yates algorithm)
@@ -509,7 +534,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Populate the fixed badge elements with shuffled data
         badgeElements.forEach((badge, index) => {
-            if (index < badgeData.length) { // Ensure we don't go out of bounds
+            if (index < badgeData.length) { // Ensure we don'T go out of bounds
                 const data = badgeData[index];
                 const frontImg = badge.querySelector('.flip-card-front img');
                 const backTitle = badge.querySelector('.flip-card-back h3');
