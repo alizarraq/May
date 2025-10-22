@@ -191,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 const description = item.getAttribute('data-description');
                 const imagesAttr = item.getAttribute('data-images');
                 const youtubeId = item.getAttribute('data-youtube-id');
-                const videoSrc = item.getAttribute('data-video-src'); // *** NEW ***
+                const videoSrc = item.getAttribute('data-video-src'); 
 
                 lightboxTitle.textContent = title;
                 lightboxDesc.innerHTML = description.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -220,23 +220,19 @@ document.addEventListener('DOMContentLoaded', () => {
                         lastLoadedIndex = numThumbsToCreate - 1; // Update last loaded index
                     }
 
-                // *** MODIFIED LOGIC ***
                 } else if (youtubeId || videoSrc) {
                     lightboxImg.classList.add('hidden');
                     lightboxVideoContainer.classList.remove('hidden');
 
                     if (youtubeId) {
-                        // It's a YouTube video
                         lightboxVideoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
                     } else if (videoSrc) {
-                        // It's a Cloudinary/Self-hosted video
                         lightboxVideoContainer.innerHTML = `
                             <video controls autoplay muted playsinline style="width: 100%; max-height: 70vh;">
                                 <source src="${videoSrc}" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>`;
                     }
-                // *** END MODIFIED LOGIC ***
 
                 } else {
                     const imgSrc = item.querySelector('img').src;
@@ -275,27 +271,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const certSlides = document.querySelectorAll('.certificate-slide');
         certSlides.forEach(slide => {
             slide.addEventListener('click', () => {
-                // MODIFICATION START
-                const description = slide.dataset.description || ''; // Get description or empty string
-                // MODIFICATION END
-
+                const description = slide.dataset.description || ''; 
                 document.getElementById('lightbox-cert-img').src = slide.dataset.imgSrc;
                 document.getElementById('lightbox-cert-title').textContent = slide.dataset.title;
                 document.getElementById('lightbox-cert-issuer').textContent = slide.dataset.issuer;
                 document.getElementById('lightbox-cert-date').textContent = slide.dataset.date;
-                
-                // MODIFICATION START
-                document.getElementById('lightbox-cert-desc').textContent = description; // Set the description text
-                // MODIFICATION END
-                
+                document.getElementById('lightbox-cert-desc').textContent = description; 
                 certLightbox.classList.add('show');
-                document.body.classList.add('lightbox-is-open'); // ** Add class to body **
+                document.body.classList.add('lightbox-is-open');
             });
         });
 
         function closeCertLightbox() {
             certLightbox.classList.remove('show');
-            document.body.classList.remove('lightbox-is-open'); // ** Remove class from body **
+            document.body.classList.remove('lightbox-is-open');
         }
 
         certLightbox.querySelector('.close-btn').addEventListener('click', closeCertLightbox);
@@ -317,7 +306,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     lightboxRecImg.src = imgSrc;
                     lightboxRecTitle.textContent = titleText;
                     recLightbox.classList.add('show');
-                    document.body.classList.add('lightbox-is-open'); // ** Add class to body **
+                    document.body.classList.add('lightbox-is-open');
                 }
             });
         });
@@ -325,7 +314,7 @@ document.addEventListener('DOMContentLoaded', () => {
         function closeRecLightbox() { 
             recLightbox.classList.remove('show'); 
             lightboxRecImg.src = ''; 
-            document.body.classList.remove('lightbox-is-open'); // ** Remove class from body **
+            document.body.classList.remove('lightbox-is-open');
         }
         closeRecBtn.addEventListener('click', closeRecLightbox);
         recLightbox.addEventListener('click', (e) => { if (e.target === recLightbox) closeRecLightbox(); });
@@ -350,7 +339,6 @@ document.addEventListener('DOMContentLoaded', () => {
             link.addEventListener('click', (e) => {
                 e.preventDefault();
                 const targetUrl = link.href;
-                // Don't trigger transition if opening a lightbox
                 if (!e.target.closest('.project-item, .certificate-slide, .accordion-header')) {
                     if (transitionOverlay) { transitionOverlay.style.opacity = '1'; }
                     setTimeout(() => { window.location.href = targetUrl; }, 500);
@@ -513,13 +501,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Define your badge data here
         const badgeData = [
-            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005458/B1_n84d09.jpg", title: "Event 1", details: "Details for the first event." },
+            { img: "httpsks://res.cloudinary.com/dw6sm94ix/image/upload/v1761005458/B1_n84d09.jpg", title: "Event 1", details: "Details for the first event." },
             { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005461/B2_u9tbiv.jpg", title: "Event 2", details: "Details for the second event." },
             { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005464/B3_rzbg06.jpg", title: "Event 3", details: "Details for the third event." },
             { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005467/B4_zwhf2e.jpg", title: "Event 4", details: "Details for the fourth event." },
             { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005473/B6_rm1xps.jpg", title: "Event 5", details: "Details for the fifth event." },
             { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005470/B5_mbf2zy.jpg", title: "Event 6", details: "Details for the sixth event." },
-            { img: "httpstrans://res.cloudinary.com/dw6sm94ix/image/upload/v1761005476/B7_zvazlo.jpg", title: "Event 7", details: "Details for the seventh event." }
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005476/B7_zvazlo.jpg", title: "Event 7", details: "Details for the seventh event." }
         ];
 
         // Shuffle function (Fisher-Yates algorithm)
@@ -534,7 +522,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Populate the fixed badge elements with shuffled data
         badgeElements.forEach((badge, index) => {
-            if (index < badgeData.length) { // Ensure we don'T go out of bounds
+            if (index < badgeData.length) { // Ensure we don't go out of bounds
                 const data = badgeData[index];
                 const frontImg = badge.querySelector('.flip-card-front img');
                 const backTitle = badge.querySelector('.flip-card-back h3');
@@ -554,4 +542,54 @@ document.addEventListener('DOMContentLoaded', () => {
     if (logoLink) {
         logoLink.setAttribute('data-text', logoLink.textContent);
     }
+    
+    // --- 11. Contact Form (NEW JAVASCRIPT SUBMISSION) ---
+    const contactForm = document.getElementById('contact-form');
+    
+    if (contactForm) {
+        contactForm.addEventListener('submit', function(e) {
+            e.preventDefault(); // Stop the form from submitting the old way
+            
+            const form = e.target;
+            const data = new FormData(form);
+            const action = form.action;
+            const submitButton = form.querySelector('button[type="submit"]');
+            
+            // Disable button and show "Sending..."
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending...';
+
+            fetch(action, {
+                method: 'POST',
+                body: data,
+                headers: {
+                    'Accept': 'application/json'
+                }
+            }).then(response => {
+                if (response.ok) {
+                    // Success! Redirect to your thanks page
+                    window.location.href = 'https://alizarraq.github.io/May/thanks.html';
+                } else {
+                    // Handle server errors
+                    response.json().then(data => {
+                        if (Object.hasOwn(data, 'errors')) {
+                            alert(data["errors"].map(error => error["message"]).join(", "));
+                        } else {
+                            alert('Oops! There was a problem submitting your form.');
+                        }
+                    });
+                    // Re-enable the button
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Send Message';
+                }
+            }).catch(error => {
+                // Handle network errors
+                alert('Oops! A network error occurred.');
+                // Re-enable the button
+                submitButton.disabled = false;
+                submitButton.textContent = 'Send Message';
+            });
+        });
+    }
+
 });
