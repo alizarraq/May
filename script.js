@@ -259,10 +259,19 @@ document.addEventListener('DOMContentLoaded', () => {
         const certSlides = document.querySelectorAll('.certificate-slide');
         certSlides.forEach(slide => {
             slide.addEventListener('click', () => {
+                // MODIFICATION START
+                const description = slide.dataset.description || ''; // Get description or empty string
+                // MODIFICATION END
+
                 document.getElementById('lightbox-cert-img').src = slide.dataset.imgSrc;
                 document.getElementById('lightbox-cert-title').textContent = slide.dataset.title;
                 document.getElementById('lightbox-cert-issuer').textContent = slide.dataset.issuer;
                 document.getElementById('lightbox-cert-date').textContent = slide.dataset.date;
+                
+                // MODIFICATION START
+                document.getElementById('lightbox-cert-desc').textContent = description; // Set the description text
+                // MODIFICATION END
+                
                 certLightbox.classList.add('show');
                 document.body.classList.add('lightbox-is-open'); // ** Add class to body **
             });
