@@ -227,8 +227,9 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (youtubeId) {
                         lightboxVideoContainer.innerHTML = `<iframe src="https://www.youtube.com/embed/${youtubeId}?autoplay=1&rel=0" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
                     } else if (videoSrc) {
+                         // *** REMOVED 'muted' FROM THIS LINE ***
                         lightboxVideoContainer.innerHTML = `
-                            <video controls autoplay muted playsinline style="width: 100%; max-height: 70vh;">
+                            <video controls autoplay playsinline style="width: 100%; max-height: 70vh;">
                                 <source src="${videoSrc}" type="video/mp4">
                                 Your browser does not support the video tag.
                             </video>`;
@@ -501,7 +502,7 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Define your badge data here
         const badgeData = [
-            { img: "httpsks://res.cloudinary.com/dw6sm94ix/image/upload/v1761005458/B1_n84d09.jpg", title: "Event 1", details: "Details for the first event." },
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005458/B1_n84d09.jpg", title: "Event 1", details: "Details for the first event." },
             { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005461/B2_u9tbiv.jpg", title: "Event 2", details: "Details for the second event." },
             { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005464/B3_rzbg06.jpg", title: "Event 3", details: "Details for the third event." },
             { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005467/B4_zwhf2e.jpg", title: "Event 4", details: "Details for the fourth event." },
@@ -568,7 +569,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }).then(response => {
                 if (response.ok) {
                     // Success! Redirect to your thanks page
-                    window.location.href = 'https://alizarraq.github.io/May/thanks.html';
+                    window.location.href = 'https://alizarraq.github.io/May/thanks/'; // Corrected path for directory structure
                 } else {
                     // Handle server errors
                     response.json().then(data => {
