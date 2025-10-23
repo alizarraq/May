@@ -511,10 +511,16 @@ p.lead {
 }
 
 .profile-pic {
-    width: 100%;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    border: 2px solid var(--border-color);
+    /* Set a fixed size for the circular container */
+    width: 150px; /* Adjust this value for desired size */
+    height: 150px; /* Should be equal to width for a perfect circle */
+    border-radius: 50%; /* Makes the image circular */
+    object-fit: cover; /* Ensures the image covers the circle without distortion */
+    object-position: center top; /* Focuses the image to the top-center of the circle */
+    margin: 0 auto 30px auto; /* Center it and add bottom margin */
+    display: block; /* Ensure it respects margins properly */
+    border: 2px solid var(--accent-color-1); /* Use accent color for border */
+    box-shadow: 0 0 20px rgba(255, 107, 107, 0.4); /* Subtle glow */
 }
 
 .skills-list {
