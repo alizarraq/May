@@ -1052,7 +1052,7 @@ footer {
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
     gap: 10px;
     /* MODIFIED: Decreased max-height for a smaller thumbnail area */
-    max-height: 30vh; 
+    max-height: 20vh; 
     overflow-y: auto;
     padding-right: 10px; 
 }
@@ -1131,4 +1131,111 @@ body.lightbox-is-open .cursor-follower {
 /* Ensure default cursor shows over lightboxes and their content */
 .lightbox, .lightbox * {
     cursor: default !important;
+}
+/* --- 19. Project Type Icons (Modified) --- */
+.project-item::after {
+    content: '';
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    width: 28px;
+    height: 28px;
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 50%;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: 16px 16px; /* Slightly smaller than the container */
+    z-index: 3; /* Above overlay */
+    opacity: 1; /* Always visible */
+    transform: scale(1);
+    transition: opacity 0.3s, transform 0.3s;
+}
+
+/* Icon for Videography */
+.project-grid .project-item[data-category="videography"]::after {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M8 5v14l11-7z"/></svg>');
+    background-size: 14px 14px; /* Adjust play icon size */
+}
+
+/* Icon for Photography */
+.project-grid .project-item[data-category="photography"]::after {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5zM19 3v2H5V3h14z"/></svg>');
+}
+
+/* Icon for Design */
+.project-grid .project-item[data-category="design"]::after {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"/></svg>');
+}
+
+/* Icon for 3D */
+.project-grid .project-item[data-category="3d"]::after {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white"><path d="M21 5v14l-9 4-9-4V5l9-4 9 4zm-10 1.35L6.61 8.5 11 10.65 15.39 8.5 11 6.35zM5 16.9l6 2.67v-8.07L5 8.83v8.07zm14-8.07l-6 2.67v8.07l6-2.67V8.83z"/></svg>');
+}
+
+/* --- 20. Mobile Experience Notice (Added) --- */
+.mobile-notice {
+    display: none; /* Hidden by default on desktop */
+    background-color: var(--accent-color-2);
+    color: var(--bg-dark);
+    text-align: center;
+    padding: 12px 10px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 10001; /* On top of everything */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+@media (max-width: 768px) {
+    .mobile-notice {
+        display: block; /* Show only on mobile */
+    }
+
+    /* Push header down to make space for the new banner */
+    header {
+        top: 39px; /* Adjust this value if the banner height changes */
+    }
+
+    /* Push progress bar down */
+    .scroll-progress-bar {
+        top: 39px; /* Match the header's new top position */
+    }
+    
+    /* Ensure mobile nav opens below the new banner */
+    .main-nav {
+        top: 39px; /* Match the header's new top position */
+    }
+}
+
+/* --- 21. Social Icon Links (Added) --- */
+.social-links {
+    margin-top: 20px;
+}
+
+.social-icon-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--text-light);
+    text-decoration: none;
+    padding: 8px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 50px;
+    transition: color 0.3s, border-color 0.3s, background-color 0.3s;
+    font-size: 0.9em;
+}
+
+.social-icon-link:hover {
+    color: var(--accent-color-1);
+    border-color: var(--accent-color-1);
+    background-color: rgba(255, 107, 107, 0.1);
+}
+
+.social-icon-link svg {
+    width: 18px; /* Control icon size */
+    height: 18px;
+    fill: currentColor; /* Inherits the color from the <a> tag */
 }
