@@ -502,13 +502,13 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Define your badge data here
         const badgeData = [
-            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005458/B1_n84d09.jpg", title: "Event 1", details: "Details for the first event." },
-            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005461/B2_u9tbiv.jpg", title: "Event 2", details: "Details for the second event." },
-            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005464/B3_rzbg06.jpg", title: "Event 3", details: "Details for the third event." },
-            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005467/B4_zwhf2e.jpg", title: "Event 4", details: "Details for the fourth event." },
-            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005473/B6_rm1xps.jpg", title: "Event 5", details: "Details for the fifth event." },
-            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005470/B5_mbf2zy.jpg", title: "Event 6", details: "Details for the sixth event." },
-            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005476/B7_zvazlo.jpg", title: "Event 7", details: "Details for the seventh event." }
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005458/B1_n84d09.jpg", title: "Simsim Film", details: "Red carpet shooting" },
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005461/B2_u9tbiv.jpg", title: "Pocket Gammers Connects", details: "attendance" },
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005464/B3_rzbg06.jpg", title: "TedX Yarmouk", details: "Media team leader" },
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005467/B4_zwhf2e.jpg", title: "Nasa Space Apps", details: "Mentor" },
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005473/B6_rm1xps.jpg", title: "Wie IEEE", details: "Web master" },
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005470/B5_mbf2zy.jpg", title: "JSYP", details: "Social media team" },
+            { img: "https://res.cloudinary.com/dw6sm94ix/image/upload/v1761005476/B7_zvazlo.jpg", title: "Hult Price", details: "Social media coordinater" }
         ];
 
         // Shuffle function (Fisher-Yates algorithm)
