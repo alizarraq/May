@@ -116,79 +116,34 @@ header {
     background-clip: text;
     color: transparent;
     display: inline-block;
-    position: relative; 
-    transition: transform 0.2s ease; /* Add a subtle transition for the main text */
+    position: relative;
+    transition: text-shadow 0.2s ease, filter 0.2s ease;
 }
 
-/* Add a subtle flicker and color shift on hover */
 .logo a:hover {
-    animation: flicker 0.5s infinite;
+    /* Apply base glow */
+    text-shadow: 0 0 5px #fff, /* Inner white glow */
+                 0 0 10px var(--accent-color-1),
+                 0 0 15px var(--accent-color-1),
+                 0 0 20px var(--accent-color-1);
+    /* Start the flicker animation */
+    animation: neon-flicker 1.5s infinite alternate;
 }
 
-/* Glitch Effect Layers */
-.logo a::after,
-.logo a::before {
-    content: attr(data-text); 
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--bg-dark);
-    overflow: hidden;
-    clip-path: inset(50% 50% 50% 50%);
-    opacity: 0; /* Hidden by default */
-    transition: opacity 0.2s ease;
+/* Keyframes for the flickering effect */
+@keyframes neon-flicker {
+  0%, 18%, 22%, 25%, 53%, 57%, 100% {
+    text-shadow:
+      0 0 4px #fff,
+      0 0 11px var(--accent-color-1),
+      0 0 19px var(--accent-color-1),
+      0 0 20px var(--accent-color-1);
+  }
+  20%, 24%, 55% {
+    text-shadow: none; /* Turn off shadow briefly */
+  }
 }
 
-.logo a:hover::before,
-.logo a:hover::after {
-    opacity: 1; /* Show the glitch layers on hover */
-}
-
-/* Glitch Layer 1 - Red/Cyan Shift */
-.logo a::before {
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: #FF4D4D; /* Bright Red */
-    transform: translate(-0.04em, -0.02em); 
-    animation: glitch-anim-1 1s infinite linear alternate-reverse;
-}
-
-/* Glitch Layer 2 - Blue/Yellow Shift */
-.logo a::after {
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: #4DFFFF; /* Bright Cyan */
-    transform: translate(0.04em, 0.02em);
-    animation: glitch-anim-2 1.5s infinite linear alternate-reverse;
-}
-
-/* Keyframe Animations for a more frantic glitch */
-@keyframes flicker {
-  0%, 100% { text-shadow: -1px -1px 0 #FFD93D, 1px 1px 0 #FF6B6B; }
-  25% { text-shadow: 1px 1px 0 #FFD93D, -1px -1px 0 #FF6B6B; }
-  50% { text-shadow: 1px -1px 0 #FFD93D, -1px 1px 0 #FF6B6B; }
-  75% { text-shadow: -1px 1px 0 #FFD93D, 1px -1px 0 #FF6B6B; }
-}
-
-@keyframes glitch-anim-1 {
-  0% { clip-path: inset(45% 0 25% 0); transform: translate(-0.04em, -0.02em); } 
-  20% { clip-path: inset(10% 0 85% 0); }
-  40% { clip-path: inset(90% 0 1% 0); transform: translate(0.04em, 0.02em); }
-  60% { clip-path: inset(30% 0 40% 0); }
-  80% { clip-path: inset(50% 0 50% 0); transform: translate(-0.04em, 0.02em); }
-  100% { clip-path: inset(25% 0 5% 0); }
-}
-
-@keyframes glitch-anim-2 {
-  0% { clip-path: inset(85% 0 5% 0); transform: translate(0.04em, 0.02em); }
-  15% { clip-path: inset(5% 0 90% 0); }
-  35% { clip-path: inset(40% 0 55% 0); transform: translate(-0.04em, -0.02em); }
-  55% { clip-path: inset(70% 0 10% 0); }
-  75% { clip-path: inset(10% 0 80% 0); transform: translate(0.04em, -0.02em); }
-  100% { clip-path: inset(55% 0 30% 0); }
-}
 
 .main-nav a {
     color: var(--text-light);
