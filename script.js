@@ -569,7 +569,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }).then(response => {
                 if (response.ok) {
                     // Success! Redirect to your thanks page
-                    window.location.href = 'https://alizarraq.github.io/May/thanks/'; // Corrected path for directory structure
+                    window.location.href = 'https://maymonazarraq/thanks/'; // Corrected path for directory structure
                 } else {
                     // Handle server errors
                     response.json().then(data => {
